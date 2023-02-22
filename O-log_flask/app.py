@@ -1,5 +1,4 @@
 from flask import Flask
-from url_crawling import select_area
 import jsonify
 import requests
 
