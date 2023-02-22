@@ -13,7 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public class PostUrlRes {
     private String store;
-    private String place;
+    private String address;
+    private String city;
     private String storeType;
     private List<String> reviewList;
     private List<String> photoList;

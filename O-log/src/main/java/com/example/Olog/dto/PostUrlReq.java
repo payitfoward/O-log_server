@@ -10,5 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostUrlReq {
-    private String Url;
+    private String url;
 }
