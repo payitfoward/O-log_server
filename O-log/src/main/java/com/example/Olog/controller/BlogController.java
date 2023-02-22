@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
-@RequestMapping(value = "/blogs")
+@RequestMapping(value = "/api")
 public class BlogController {
     private final BlogService blogService;
 
     public BlogController(BlogService blogService){ this.blogService = blogService; }
 
     @ResponseBody
-    @PostMapping("/url-input")
+    @PostMapping("/bloggpt")
     public BaseResponse<PostUrlRes> postBlog(@RequestBody PostUrlReq postUrlReq) throws IOException, InterruptedException {
         PostUrlRes postUrlRes = blogService.getBlogList(postUrlReq);
         return new BaseResponse<>(postUrlRes);
