@@ -31,19 +31,19 @@ public class BlogService {
         driver.switchTo().frame("entryIframe");
 
         WebElement store = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[2]/div[1]/div[1]/span[2]"));
-        postUrlRes.setStore(store.getText());
+        postUrlRes.setName(store.getText());
         System.out.println("가게명: " + store.getText());
 
         WebElement storeType = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[2]/div[1]/div[1]/span[3]"));
-        postUrlRes.setStoreType(storeType.getText());
+        postUrlRes.setStore_type(storeType.getText());
         System.out.println("업종: " + storeType.getText());
 
         WebElement place = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[6]/div/div[2]/div/div/div[1]/div/a/span[1]"));
-        postUrlRes.setAddress(place.getText());
+        postUrlRes.setPlace(place.getText());
         String city = place.getText().split(" ")[1].split("구")[0];
         System.out.println("주소: " + place.getText());
         System.out.println("위치: " + city);
-        postUrlRes.setCity(city);
+        // postUrlRes.setCity(city);
 
         WebElement reviewButton = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[5]/div/div/div/div/a[4]/span"));
         reviewButton.click();
@@ -81,7 +81,7 @@ public class BlogService {
                 reviews.add(element.getText());
             }
         }
-        postUrlRes.setReviewList(reviews);
+        postUrlRes.setReview_list(reviews);
         System.out.println(reviews);
 
         /*
@@ -98,7 +98,7 @@ public class BlogService {
                     photoList.add(photo);
                 }
             }
-        postUrlRes.setPhotoList(photoList);
+        postUrlRes.setImage_list(photoList);
         System.out.println("사진 리뷰 : " + photoList);
         driver.close();    //탭 닫기
         driver.quit();    //브라우저 닫기

@@ -12,10 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostUrlRes {
-    private String store;
-    private String address;
-    private String city;
-    private String storeType;
-    private List<String> reviewList;
-    private List<String> photoList;
+    private String name;
+    private String place;
+    // private String city;
+    private String store_type;
+    private List<String> review_list;
+    private List<String> image_list;
 }
