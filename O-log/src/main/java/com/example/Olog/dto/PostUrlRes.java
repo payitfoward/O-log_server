@@ -1,5 +1,8 @@
 package com.example.Olog.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +17,12 @@ import java.util.List;
 public class PostUrlRes {
     private String name;
     private String place;
-    // private String city;
-    private String store_type;
-    private List<String> review_list;
-    private List<String> image_list;
+    @JsonProperty("store_type")
+    private String storeType;
+    @JsonProperty("city")
+    private String city;
+    @JsonProperty("review_list")
+    private List<String> reviewList;
+    @JsonProperty("image_list")
+    private List<String> imageList;
 }

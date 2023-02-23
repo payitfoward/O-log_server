@@ -1,23 +1,70 @@
 package com.example.Olog.service;
 
+import com.example.Olog.dto.PostClientRes;
+import com.example.Olog.dto.PostTextRes;
 import com.example.Olog.dto.PostUrlReq;
 import com.example.Olog.dto.PostUrlRes;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class BlogService {
     private WebDriver driver;
     private String baseUrl = "https://map.naver.com/v5/search/%EC%88%A0%EC%9D%B8/place/1046678640?placePath=%3Fentry=pll%26from=nx%26fromNxList=true&c=15,0,0,0,dh";
+//    @Value("${flask.flaskUrl}")
+    private String flaskUrl = "";
 
+//    public BlogService (String flaskUrl){
+//        this.flaskUrl = flaskUrl;
+//    }
+    public PostClientRes requestToFastAPI(PostUrlRes postUrlRes) throws Exception {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Header set
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        // Body set **
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("name", postUrlRes.getName());
+        body.add("place", postUrlRes.getCity());
+        body.add("store_type", postUrlRes.getStoreType());
+        body.add("review_list", postUrlRes.getReviewList().toString());
+        body.add("image_list", postUrlRes.getImageList().toString());
+        log.info(body.toString());
+        // Message
+        HttpEntity<?> requestMessage = new HttpEntity<>(body, httpHeaders);
+
+        // Request
+        HttpEntity<String> response = restTemplate.postForEntity(flaskUrl, requestMessage, String.class);
+
+        // Response 파싱
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+        PostTextRes dto = objectMapper.readValue(response.getBody(), PostTextRes.class);
+
+        PostClientRes postClientRes = new PostClientRes();
+        postClientRes.setDesc(dto.getText());
+        postClientRes.setImg(dto.getImg());
+        postClientRes.setStore(postUrlRes.getName());
+        postClientRes.setCategory(postUrlRes.getStoreType());
+        postClientRes.setCity(postUrlRes.getCity());
+        return postClientRes;
+    }
     public PostUrlRes getBlogList(PostUrlReq postUrlReq) throws InterruptedException {
         String url = postUrlReq.getUrl();
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\codus\\Desktop\\O-log_server\\O-log\\src\\main\\java\\com\\example\\Olog\\util\\chromedriver\\chromedriver.exe");
@@ -35,7 +82,7 @@ public class BlogService {
         System.out.println("가게명: " + store.getText());
 
         WebElement storeType = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[2]/div[1]/div[1]/span[3]"));
-        postUrlRes.setStore_type(storeType.getText());
+        postUrlRes.setStoreType(storeType.getText());
         System.out.println("업종: " + storeType.getText());
 
         WebElement place = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[6]/div/div[2]/div/div/div[1]/div/a/span[1]"));
@@ -43,7 +90,7 @@ public class BlogService {
         String city = place.getText().split(" ")[1].split("구")[0];
         System.out.println("주소: " + place.getText());
         System.out.println("위치: " + city);
-        // postUrlRes.setCity(city);
+        postUrlRes.setCity(city);
 
         WebElement reviewButton = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[5]/div/div/div/div/a[4]/span"));
         reviewButton.click();
@@ -81,7 +128,7 @@ public class BlogService {
                 reviews.add(element.getText());
             }
         }
-        postUrlRes.setReview_list(reviews);
+        postUrlRes.setReviewList(reviews);
         System.out.println(reviews);
 
         /*
@@ -89,7 +136,7 @@ public class BlogService {
          */
         List<String> photoList = new ArrayList<>();
         System.out.println("사진 개수 : " + driver.findElements(By.xpath("//*[@id=\"app-root\"]/div/div/div/div[7]/div[3]/div[3]/div[1]/ul/li[7]/div[2]/div/div/div/div[1]/a/div")).size());
-        for(int i = 0; i < reviewLen; i++){
+        for(int i = 1; i <= reviewLen; i++){
             try {
                     String photo = driver.findElement(By.xpath("//*[@id=\"app-root\"]/div/div/div/div[7]/div[3]/div[3]/div[1]/ul/li["+i+"]/div[2]/div/div/div/div[1]/a/div")).getCssValue("background-image").split("\"")[1].split("\"")[0];
                     photoList.add(photo);
@@ -98,7 +145,7 @@ public class BlogService {
                     photoList.add(photo);
                 }
             }
-        postUrlRes.setImage_list(photoList);
+        postUrlRes.setImageList(photoList);
         System.out.println("사진 리뷰 : " + photoList);
         driver.close();    //탭 닫기
         driver.quit();    //브라우저 닫기
