@@ -13,7 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public class PostClientRes {
     private String title;
-    private String desc;
+    private List<String> desc;
+    private List<String> text;
     private String store;
     private String category;
     private List<String> img;
