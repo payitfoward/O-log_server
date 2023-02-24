@@ -88,7 +88,7 @@ public class BlogService {
     }
     public PostUrlRes getBlogList(PostUrlReq postUrlReq) throws InterruptedException {
         String url = postUrlReq.getUrl();
-        System.setProperty("webdriver.chrome.driver", "O-log/src/main/java/com/example/Olog/util/chromedriver/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\codus\\Desktop\\O-log_server\\O-log\\src\\main\\java\\com\\example\\Olog\\util\\chromedriver\\chromedriver.exe");
         //크롬 드라이버 셋팅 (드라이버 설치한 경로 입력)
         driver = new ChromeDriver();
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -107,11 +107,11 @@ public class BlogService {
         System.out.println("업종: " + storeType.getText());
 
         WebElement place = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[6]/div/div[2]/div/div/div[1]/div/a/span[1]"));
-        postUrlRes.setCity(place.getText());
         String city = place.getText().split(" ")[1].split("구")[0];
+        postUrlRes.setCity(city);
         System.out.println("주소: " + place.getText());
-        System.out.println("위치: " + city);
-        postUrlRes.setPlace(city);
+        System.out.println("지역구: " + city);
+        postUrlRes.setPlace(place.getText());
 
         WebElement reviewButton = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[5]/div/div/div/div/a[4]/span"));
         reviewButton.click();
@@ -159,13 +159,13 @@ public class BlogService {
         System.out.println("사진 개수 : " + driver.findElements(By.xpath("//*[@id=\"app-root\"]/div/div/div/div[7]/div[3]/div[3]/div[1]/ul/li[7]/div[2]/div/div/div/div[1]/a/div")).size());
         for(int i = 1; i <= reviewLen; i++){
             try {
-                    String photo = driver.findElement(By.xpath("//*[@id=\"app-root\"]/div/div/div/div[7]/div[3]/div[3]/div[1]/ul/li["+i+"]/div[2]/div/div/div/div[1]/a/div")).getCssValue("background-image").split("\"")[1].split("\"")[0];
-                    photoList.add(photo);
-                } catch (NoSuchElementException e){
-                    String photo = "";
-                    photoList.add(photo);
-                }
+                String photo = driver.findElement(By.xpath("//*[@id=\"app-root\"]/div/div/div/div[7]/div[3]/div[3]/div[1]/ul/li["+i+"]/div[2]/div/div/div/div[1]/a/div")).getCssValue("background-image").split("\"")[1].split("\"")[0];
+                photoList.add(photo);
+            } catch (NoSuchElementException e){
+                String photo = "";
+                photoList.add(photo);
             }
+        }
         postUrlRes.setImageList(photoList);
         System.out.println("사진 리뷰 : " + photoList);
         driver.close();    //탭 닫기
