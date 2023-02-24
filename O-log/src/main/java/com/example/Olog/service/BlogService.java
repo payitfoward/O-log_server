@@ -88,7 +88,7 @@ public class BlogService {
     }
     public PostUrlRes getBlogList(PostUrlReq postUrlReq) throws InterruptedException {
         String url = postUrlReq.getUrl();
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\codus\\Desktop\\O-log_server\\O-log\\src\\main\\java\\com\\example\\Olog\\util\\chromedriver\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "O-log/src/main/java/com/example/Olog/util/chromedriver/chromedriver.exe");
         //크롬 드라이버 셋팅 (드라이버 설치한 경로 입력)
         driver = new ChromeDriver();
         JavascriptExecutor js = (JavascriptExecutor) driver;
