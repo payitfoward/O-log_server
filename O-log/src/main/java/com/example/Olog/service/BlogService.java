@@ -98,11 +98,13 @@ public class BlogService {
         Thread.sleep(1000);
         driver.switchTo().frame("entryIframe");
 
-        WebElement store = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[2]/div[1]/div[1]/span[2]"));
+        Thread.sleep(1000);
+
+        WebElement store = driver.findElement(By.cssSelector("#_title > span.Fc1rA"));
         postUrlRes.setName(store.getText());
         System.out.println("가게명: " + store.getText());
 
-        WebElement storeType = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[2]/div[1]/div[1]/span[3]"));
+        WebElement storeType = driver.findElement(By.cssSelector("#_title > span.DJJvD"));
         postUrlRes.setStoreType(storeType.getText());
         System.out.println("업종: " + storeType.getText());
 
@@ -113,7 +115,18 @@ public class BlogService {
         System.out.println("지역구: " + city);
         postUrlRes.setPlace(place.getText());
 
-        WebElement reviewButton = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[5]/div/div/div/div/a[4]/span"));
+        List<WebElement> buttons = driver.findElements(By.xpath("//*[@id=\"app-root\"]/div/div/div/div[5]/div/div/div/div/a"));
+        WebElement reviewButton;
+        if (buttons.size() == 4)
+        {
+            reviewButton = driver.findElement(By.cssSelector("#app-root > div > div > div > div.place_fixed_maintab > div > div > div > div > a:nth-child(3) > span"));
+        }
+        else if (buttons.size() == 5){
+            reviewButton = driver.findElement(By.cssSelector("#app-root > div > div > div > div.place_fixed_maintab > div > div > div > div > a:nth-child(4) > span"));
+        }
+        else {
+            reviewButton = driver.findElement(By.cssSelector("#app-root > div > div > div > div.place_fixed_maintab > div > div > div > div > a:nth-child(5) > span"));
+        }
         reviewButton.click();
 
         // 더보기 버튼
@@ -141,9 +154,16 @@ public class BlogService {
             WebElement element;
             // 단일 리뷰
             try {
-                element = driver.findElement(By.xpath("//*[@id=\"app-root\"]/div/div/div/div[7]/div[3]/div[3]/div[1]/ul/li[" + i + "]/div[3]/a/span[1]"));
+                try{
+                    // 더보기 X
+                    element = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[6]/div[3]/div[3]/div[1]/ul/li["+i+"]/div[2]/a/span[1]"));
+                } catch (NoSuchElementException n){
+                    // 더보기 O
+                    element = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div[3]/div[1]/ul/li["+i+"]/div[2]/a/span"));
+                }
             } catch (NoSuchElementException e) {
-                element = driver.findElement(By.xpath("//*[@id=\"app-root\"]/div/div/div/div[7]/div[3]/div[3]/div[1]/ul/li[" + i + "]/div[2]/a/span"));
+                // 그림 리뷰
+                element = driver.findElement(By.xpath("/html/body/div[3]/div/div/div/div[7]/div[3]/div[3]/div[1]/ul/li["+i+"]/div[3]/a/span[1]"));
             }
             if (!element.getText().equals("개의 리뷰가 더 있습니다")) {
                 reviews.add(element.getText());
